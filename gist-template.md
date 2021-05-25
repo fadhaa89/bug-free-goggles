@@ -30,12 +30,27 @@ The ^ and $ in the regex are Anchors, as seen in the beginning and end of the ex
 n our regex above, the beginning ^ and ending $ anchors indicate that the search must match characters defined by the piece of the expression located between the anchors: ([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6}) We will explain each of these components in their respective sections below.
 
 ### Quantifiers
-Quantifiers specify how many instances of a character, group, or character class must be present in the input for a match to be found.
-Quantifiers indicate how many of the proceeding character(s) must exist to return a match. For example, the expression a{1,5} would match all strings in which "a" occurs between 1 and 5 times. Similarly, (ab){1,5} would match all strings in which (ab) occurs between 1 and 5 times.In our regex above, we can see that any characters represented by ([a-z\.] must occur between 2 and 6 times return a match.
-ex:The curly brackets {} in the regex indicate quantifiers, as shown by {2,6} towards the end of the expression:
+Quantifiers are used to quantify how many times a part of your regular expression should be repeated. If users want to repeat a part in a regular expression such as an individual character, a character class or a sub-expression, they can write a quantifier after it to specify how many times it should be repeated. For example, the regular expression /\d{4}/ matches a four-digit number. It is the same as /\d\d\d\d/. The following list shows some examples of the most common quantifiers: ? (Repeated from 0 to 1 times), * (Repeated from 0 to Infinity times), + (Repeated from 1 to Infinity times), {N} (Repeated from N to N times), {,N} (Repeated from 0 to N times), {N,} (Repeated from N to Infinity times), and {N,M} (Repeated from N to M times).
 
-/^([a-z0-9_.-]+)@([\da-z.-]+).([a-z.]{2,6})$/
+A quantifire can be greedy or lazy-As Many/Few As Possible that is explained below.
 
+a*a+a? -0 or more, 1 or more, 0 or 1
+
+"+" Matches 1 or more of the preceding token.
+"*" Matches 0 or more of the preceding token.
+"?" Matches 0 or 1 of the preceding token, effectively making it optional.
+"?" Makes the preceding quantifier lazy, causing it to match as few characters as possible. By default, quantifiers are greedy, and will match as many characters as possible.
+a{5}a{2,} -Looks for exactly five, two or more
+
+{2,6} -forces the input of characters between two & six characters long.
+
+a+?a{2,}? -match as few as possible
+
+ab|cd -match ab or cd
+
+Possessive Quantifiers Disable Backtracking.
+
+There are occasionally situations where you'd like a quantifier to try and greedily match as many times as possible, but also to never give up any of the characters it has already matched, and instead fail the overall match instead of trying to backtrack. For example, consider the process of trying to match this regex: a{1,10}aaaaaaaaaaX. In this case, the '{1,10}' quantifier is 'greedy', so it will go ahead and try to consume as many 'a' characters as it's allowed to before moving on to the next pattern. It just so happens, that the pattern after this quantifier also consists of a long string of 'a's, and there aren't enough 'a' to share between both parts of the pattern! In fact, the regex engine will first try the entire search by choosing 10 'a's, only realizing at the 'Z' character that it made a mistake. Then it tries again with 9, then with 8 and so on until it tries to consume 1, and only then does it realize that the entire pattern won't match and fail. In this case, a 'possessive' quantifier can be used to speed up the process of failure. It does this by disabling the ability to 'backtrack' and re-attempt the rest of the match with one less repetition. For this use case of possessive quantifiers, we're only concerned with speeding up failing matches rather than matching something different.
 ### OR Operator
 The Alternation Operator ( | or \| )
 
@@ -76,6 +91,7 @@ In our regex above, the characters directly before the @ sign [a-z0-9_\.-] and d
 
 ### Boundaries
 Boundaries work by matching strings and their positioning within words and phrases. For instance, "\b" matches a word boundary between a word character and a non-word character or position, and "\B" matches any position that is not a word boundary.
+
 ### Back-references
 Back-references allow the user to repeat a capturing group. It's used inside a regex by inlining its group number preceded by a single backslash.
 
